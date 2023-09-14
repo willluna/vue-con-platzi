@@ -2,38 +2,47 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue Counter</title>
+    <title>Document</title>
   </head>
   <body>
     <script src="https://unpkg.com/vue@next"></script>
     <div id="app"></div>
     <script>
       const app = Vue.createApp({
+        data() {
+          return {
+            items: ["uno", "dos", "tres"],
+          };
+        },
+        methods: {
+          remove(i) {
+            const items = this.items.filter((el, index) => index !== i);
+            this.items = items;
+          },
+        },
         template: `
-          <div>
-              <v-layout>
-                  <template v-slot:header>
-                    <button>Titulo</button>
-                    </template>
-                    <template v-slot:content>
-                      Lorem ispum dolor sit amet.
-                      </template>
-                </v-layout>
-
-            </div>
-        `,
+                <ul>
+                    <v-item
+                      v-for="(item,i) in items"
+                      v-bind:text="item"
+                      v-on:remove="remove(i)"
+                    />
+                </ul>
+            `,
       });
 
-      app.component("v-layout", {
-        template: `
-          <header>
-            <slot name="header"></slot>
-          </header>
-          <div>
-            <slot name="content"></slot>
-            </div>
-        `,
+      app.component("v-item", {
+        props: {
+          text: String,
+        },
+        methods: {
+          rm() {
+            this.$emit("remove");
+          },
+        },
+        template: `<li v-on:click="rm">{{ text }}</li>`,
       });
 
       const vm = app.mount("#app");
